@@ -1,0 +1,1138 @@
+{
+  "name": "updated_working_sandytech",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 30 9 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "0 30 18 * * *"
+            }
+          ]
+        }
+      },
+      "id": "37212921-c273-472d-9b23-b5d7016f0978",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -6832,
+        832
+      ],
+      "notesInFlow": false,
+      "notes": "\n"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "contentTopic",
+              "value": "={{ $json['Topic Title'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "targetAudience",
+              "value": "Startup Founder, SME Leader, Tech Lead/CTO, Aspiring Entrepreneur, Student/Portfolio Builder",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "tone",
+              "value": "Confident, founder-first, clarity-driven, and practical — sounding like a trusted tech partner who simplifies AI & software for real business outcomes",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "brandName",
+              "value": "360JobReady",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "brandUrl",
+              "value": "https://www.sandytech.org/",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "niche",
+              "value": "AI, SaaS, Automation, MVPs, Startups, ProductEngineering, DigitalTransformation",
+              "type": "string"
+            },
+            {
+              "id": "2a966cbf-31bd-4972-bfcf-ddc43f1ac8c6",
+              "name": "hook",
+              "value": "={{ $json['Hook (First Line)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ab13f940-8af0-4cd9-b4bd-93b454fcaa12",
+              "name": "hashtags",
+              "value": "={{ $json['Trending Hashtags'] }}, #SandyTech",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "1768ee28-b496-49cd-ae1b-953e2977b356",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6288,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gemini-2.0-flash-exp"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.contentTopic }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=You are a social media content creator for 360JobReady, a platform specializing in {{ $json.niche }}.\n\nCreate a Threads post (max 500 characters) about: {{ $json.contentTopic }}\n\nTarget audience: {{ $json.targetAudience }}\nTone: conversational, engaging, valuable\n\nRequirements:\n1. Start with a conversational hook\n2. Provide quick, valuable insights\n3. Include 2-3 relevant hashtags\n4. Keep it under 500 characters\n5. End with CTA to {{ $json.brandUrl }}\n6. Make it feel like a genuine conversation\n\nReturn ONLY the post text."
+        }
+      },
+      "id": "cf911de5-a4a1-4ed6-bf65-73f59eb70852",
+      "name": "Generate Threads Caption",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        3440
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yycdOPAQponBrmTz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/1h9f4Ea6rVFU8VT_eHOvrKYi0RfKBmO49BB-fLiKkzoE/edit?gid=2093574037#gid=2093574037",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2093574037,
+          "mode": "list",
+          "cachedResultName": "sandytech",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h9f4Ea6rVFU8VT_eHOvrKYi0RfKBmO49BB-fLiKkzoE/edit#gid=2093574037"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "contentTopic": "={{ $('Topic_picker').item.json['Topic Title'] }}",
+            "linkedinCaption": "={{ $('Parse Captions').item.json.linkedinCaption }}",
+            "facebookCaption": "={{ $('Parse Captions').item.json.facebookCaption }}",
+            "instagramCaption": "={{ $('Parse Captions').item.json.instagramCaption }}",
+            "twitterCaption": "={{ $('Parse Captions').item.json.twitterCaption }}",
+            "approvalStatus": "=Posted",
+            "image_url": "={{ $('Post_image').item.json.secure_url }}",
+            "Posted at": "={{ $now.setZone('Asia/Kolkata').toFormat('dd LLL yyyy, hh:mm a') }}"
+          },
+          "matchingColumns": [
+            "contentTopic"
+          ],
+          "schema": [
+            {
+              "id": "contentTopic",
+              "displayName": "contentTopic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedinCaption",
+              "displayName": "linkedinCaption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "facebookCaption",
+              "displayName": "facebookCaption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagramCaption",
+              "displayName": "instagramCaption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "twitterCaption",
+              "displayName": "twitterCaption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "approvalStatus",
+              "displayName": "approvalStatus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image_url",
+              "displayName": "image_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Posted at",
+              "displayName": "Posted at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cdb2a691-2cd9-4309-85bb-722ccd54f572",
+      "name": "Add to Approval Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4000,
+        800
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "P5HlBi6Ox4rJdWfv",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Parse Captions').item.json.twitterCaption }}",
+        "additionalFields": {
+          "attachments": "={{ $json.media_id_string }}"
+        }
+      },
+      "id": "cecd4ee6-736e-424d-9a34-a289c7334a00",
+      "name": "Post to X (Twitter)",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -4384,
+        1120
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "524xNuuwWcd7txna",
+          "name": "X account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "postAs": "organization",
+        "organization": "109666950",
+        "text": "={{ $('Parse Captions').item.json.linkedinCaption }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "id": "5f4c4476-e8ee-49be-84e5-ab76558d9744",
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -4464,
+        928
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "6Av3QevUpxIiVsbw",
+          "name": "sandy_tech_linkedin_api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "hostUrl": "=graph.facebook.com",
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "=865425183331395",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.facebookCaption }}"
+              },
+              {
+                "name": "url",
+                "value": "={{ $json.image_url }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "755a4f12-70bf-4643-b8a7-746d2db37fa8",
+      "name": "Post to Facebook",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -4704,
+        560
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "nfvZpciWBNA3Bg6m",
+          "name": "sandytech"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -5136,
+        864
+      ],
+      "id": "09fb2578-a7e9-4ed1-ae11-158425b3d58b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ad740d06-97ac-4332-b448-64a6ac3d34fb",
+              "name": "contenttopic",
+              "value": "={{ $('Workflow Configuration').item.json.contentTopic }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff11d7-93ee-477c-af22-b928937281a8",
+              "name": "image_url",
+              "value": "={{ $json.secure_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5488,
+        912
+      ],
+      "id": "f05c44f4-d67e-4d24-9d52-4425ae0e89ca",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json['Topic Title'] }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=You are a senior social media content creator for sandyTech, a brand specializing in {{$json[\"niche\"]}}. make sure the content should be really useful for target audience jobseekers, freshers, students. it should be repost worthy. silently high-light SandyTech services page: \"https://www.sandytech.org/#services\" while explaining the topic: \"{{$json[\"contentTopic\"]}}\".\n\nTASK:\nGenerate a single raw JSON object with exactly four keys: \"linkedin\", \"facebook\", \"instagram\", \"twitter\".\nEach value must be a plain text caption optimized for that platform, for the topic: \"{{$json[\"contentTopic\"]}}\".\n\nSTRICT OUTPUT FORMAT:\n1. Return ONLY one valid JSON object. No explanations, no comments, no surrounding text.\n2. JSON must have EXACTLY these keys: linkedin, facebook, instagram, twitter.\n3. Every value is a single string.\n4. Use \\n to represent line breaks inside the strings (for paragraphs and bullet lists).\n5. Escape internal double quotes so the JSON is valid.\n6. Do NOT add any extra fields.\n\nGLOBAL STYLE RULES (VERY IMPORTANT):\n1. Do NOT use Markdown: no **bold**, no __underline__, no # headings, no code fences, no * list markers.\n2. Do NOT use the * or # characters for formatting.\n3. Headings must look visually bigger size front then paragraph and bold using words, not symbols. Use ALL CAPS plus an optional emoji and a colon:\n   Example:\n   \"start-up GROWTH TIPS: 🚀\"\n4. Structure the caption like a Word document:\n   - Strong first-line hook.\n   - Blank line.\n   - Short paragraphs (1–3 sentences).\n   - Section headings in ALL CAPS and BOLD, bigger font size.\n   - Bullet points using \"• \" (bullet + space) on separate lines.\n   - Optional emojis, maximum 3 per caption.\n5. The text must be easy to read on mobile: no huge blocks of text, use line breaks and spacing.\n6. No raw \"\\n\" text in the content – only JSON-escaped newlines.\n\nPLATFORM RULES:\n\nLINKEDIN (max 1300 characters):\n- Professional, human, relatable tone with a real-story style.\n- First line: strong hook (question or bold statement). eg:{{ $json['Hook (First Line)'] }}\n- At least one heading in ALL CAPS and BOLD style (for example: \"ATS OPTIMIZATION TIPS:\").\n- At least 2 actionable bullet points using \"• \".\n- Include relevant trending hashtags: {{ $json.hashtags }}\n- End with a clear CTA that mentions {{$json[\"brandUrl\"]}} on a new line.\n\nFACEBOOK:\n- Conversational, slightly longer, emotional and engaging.\n- First line: hook{{ $json['Hook (First Line)'] }} .\n- Include one short anecdote or example (1–3 sentences).\n- Use at least one heading in ALL CAPS and BOLD, and bullet points with \"• \" for key tips.\n- Include relevant trending hashtags: {{ $json.hashtags }}\n- End with a CTA linking to {{$json[\"brandUrl\"]}} on a new line.\n\nINSTAGRAM (max 2200 characters):\n- Warm, energetic human tone.\n- First line: visually strong hook {{ $json['Hook (First Line)'] }}(can include emoji).\n- Use one heading in ALL CAPS and Bold (for example: \"QUICK RESUME TIPS:\") followed by 3 concise bullet lines with \"• \".\n- Must include EXACTLY 5 hashtags at the end, in this order and all on one line:\n relevant trending hashtags: {{ $json.hashtags }}\n- End with a CTA mentioning {{$json[\"brandUrl\"]}} just before the hashtags.\n\nTWITTER / X (max 280 characters):\n- Punchy hook first.\n- One micro-tip or value statement.\n- Use spacing and at most one line break (\\n) if needed.\n- Include EXACTLY 2 relevant trending hashtags: {{ $json.hashtags }}\n- Include a CTA mentioning {{$json[\"brandUrl\"]}}.\n\nFINAL INSTRUCTIONS:\nOutput ONLY one JSON object in this shape (example structure only):\n{\"linkedin\":\"...\",\"facebook\":\"...\",\"instagram\":\"...\",\"twitter\":\"...\"}\nNothing else.\n"
+        }
+      },
+      "id": "fcaed0d2-2df0-4b68-9ca1-9cf578cdfc1c",
+      "name": "Generate Multi-Captions",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -6032,
+        784
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yycdOPAQponBrmTz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Helper: remove Markdown artifacts and normalize bullets\nfunction clean(text) {\n  if (!text) return '';\n\n  let t = text;\n\n  // If we got double-escaped newlines like \"\\\\n\", convert to real newlines\n  t = t.replace(/\\\\n/g, '\\n');\n\n  // Remove markdown-style bold/italic if they ever appear\n  t = t.replace(/\\*\\*(.+?)\\*\\*/g, '$1'); // **bold**\n  t = t.replace(/\\*(.+?)\\*/g, '$1');     // *italic*\n  t = t.replace(/__(.+?)__/g, '$1');     // __bold__\n  t = t.replace(/_(.+?)_/g, '$1');       // _italic_\n\n  // Remove heading hashes at the start of a line (#, ##, etc.)\n  t = t.replace(/^[ \\t]*#{1,6}[ \\t]+/gm, '');\n\n  // Convert \"-\" or \"*\" list markers at line start to a nice bullet \"• \"\n  t = t.replace(/^[ \\t]*[-*][ \\t]+/gm, '• ');\n\n  // Remove backticks if any\n  t = t.replace(/`/g, '');\n\n  // Trim extra spaces around the whole text\n  return t.trim();\n}\n\n// Helper: extract from raw string if JSON is slightly broken\nfunction extractFromRaw(key, source) {\n  if (!source) return '';\n  const pattern = new RegExp('\"' + key + '\"\\\\s*:\\\\s*\"(.*?)\"', 's');\n  const match = source.match(pattern);\n  if (!match) return '';\n  // Unescape quotes and keep newlines encoded as \\n\n  return match[1].replace(/\\\\\"/g, '\"');\n}\n\n// 1. Safely get the raw model text from Gemini node\nlet raw = '';\n\ntry {\n  raw = $json.content?.parts?.[0]?.text || '';\n} catch (e) {\n  raw = '';\n}\n\nif (!raw && $json.text) raw = $json.text;\nif (!raw && typeof $json === 'string') raw = $json;\n\n// 2. Remove ```json fences if any\nraw = (raw || '')\n  .replace(/```json/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\n// 3. Try to parse JSON normally\nlet parsed = {};\ntry {\n  const first = raw.indexOf('{');\n  const last = raw.lastIndexOf('}');\n  if (first !== -1 && last !== -1 && last > first) {\n    const jsonStr = raw.substring(first, last + 1);\n    parsed = JSON.parse(jsonStr);\n  }\n} catch (e) {\n  parsed = {};\n}\n\n// 4. For each platform, prefer parsed JSON; else regex from raw\nlet linkedinCaption  = parsed.linkedin  || extractFromRaw('linkedin',  raw) || '';\nlet facebookCaption  = parsed.facebook  || extractFromRaw('facebook',  raw) || '';\nlet instagramCaption = parsed.instagram || extractFromRaw('instagram', raw) || '';\nlet twitterCaption   = parsed.twitter   || extractFromRaw('twitter',   raw) || '';\n\n// 5. Clean and normalize for nice display (line breaks, bullets, no markdown symbols)\nlinkedinCaption  = clean(linkedinCaption);\nfacebookCaption  = clean(facebookCaption);\ninstagramCaption = clean(instagramCaption);\ntwitterCaption   = clean(twitterCaption);\n\n// 6. Return single item; map these fields in your Google Sheets node\nreturn [\n  {\n    json: {\n      contentTopic: $json.contentTopic || '',\n\n      linkedinCaption,\n      facebookCaption,\n      instagramCaption,\n      twitterCaption,\n\n      approvalStatus: 'Pending',\n      timestamp: new Date().toISOString()\n    }\n  }\n];\n"
+      },
+      "id": "602b4337-f091-443d-b773-08d975914eed",
+      "name": "Parse Captions",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -5680,
+        784
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.x.com/2/media/upload",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "media",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "media_category",
+              "value": "tweet_image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1424,
+        2560
+      ],
+      "id": "1b1afb34-7bac-4055-9509-ce192bc25d1f",
+      "name": "HTTP Request",
+      "credentials": {
+        "twitterOAuth1Api": {
+          "id": "mhJvIQT2Q2F59y1r",
+          "name": "X OAuth account"
+        },
+        "oAuth2Api": {
+          "id": "5rmnL245EPZ5v5oB",
+          "name": "sandytech_twitter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -4240,
+        784
+      ],
+      "id": "2017b723-9f7a-4f95-8648-4d0184617dd0",
+      "name": "wait"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI",
+          "mode": "list",
+          "cachedResultName": "topic_picker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 652370452,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI/edit#gid=652370452"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -6656,
+        832
+      ],
+      "id": "c094de79-ee88-4f57-b5f1-c529586a166f",
+      "name": "Topic_picker",
+      "credentials": {
+        "googleApi": {
+          "id": "P5HlBi6Ox4rJdWfv",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI",
+          "mode": "list",
+          "cachedResultName": "topic_picker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 652370452,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Fj1L-dV16cd0otLJv9TQV1Wefxh52sEnycIczK9HaJI/edit#gid=652370452"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Topic_picker').item.json.row_number }}",
+            "status": "Posted"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Topic Title",
+              "displayName": "Topic Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Hook (First Line)",
+              "displayName": "Hook (First Line)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Content Angle",
+              "displayName": "Content Angle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Trending Hashtags",
+              "displayName": "Trending Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Gemini-Friendly Image Prompt",
+              "displayName": "Gemini-Friendly Image Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3824,
+        800
+      ],
+      "id": "bdf8f071-dcc2-4880-b77f-d6f156cd7809",
+      "name": "Update_topic_picker",
+      "credentials": {
+        "googleApi": {
+          "id": "P5HlBi6Ox4rJdWfv",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "17841479596057856",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "caption",
+                "value": "={{ $json.instagramCaption }}"
+              },
+              {
+                "name": "image_url",
+                "value": "={{ $json.image_url }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "406de70d-30b1-4784-8e27-0f61b9471c61",
+      "name": "Post to Instagram",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -4800,
+        848
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "Uibg0mb4ilvY9SW2",
+          "name": "sandytech_insta_api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "17841479596057856",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f6ee3384-80a9-48bb-9c00-0af61b657156",
+      "name": "Post to Instagram1",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -4496,
+        784
+      ],
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "Uibg0mb4ilvY9SW2",
+          "name": "sandytech_insta_api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4640,
+        800
+      ],
+      "id": "99d4efc5-b8fc-4f4d-a754-2935d1aca13c",
+      "name": "Wait",
+      "webhookId": "ec9a0d01-4566-4f4e-a945-f36a9580c3b2"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/imagen-4.0-generate-preview-06-06",
+          "mode": "list",
+          "cachedResultName": "models/imagen-4.0-generate-preview-06-06"
+        },
+        "prompt": "={{ $json['Gemini-Friendly Image Prompt'] }}\n\nStyle:\n- Clean, professional, minimal\n- Flat illustration\n- Bright but professional colors\n- include minimal text if required optional \n- at the corner include StandyTech \n- Instagram & LinkedIn friendly\n- utilize all the space in well manner\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -6016,
+        928
+      ],
+      "id": "86a96e96-1926-4498-aec6-6454986409a6",
+      "name": "Generate an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NfSNnPSgQRX9VM5P",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudinary.com/v1_1/djwg6fbh7/image/upload\n",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "ig_upload"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -5728,
+        928
+      ],
+      "id": "d15bd79b-f84e-4913-9426-1973b8e8f873",
+      "name": "Post_image"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ddb253c3-0bb1-47d0-af1f-7d76f9cfb95e",
+              "leftValue": "={{ $json['Topic Title'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0c3a45a8-c5a2-45e4-8515-d4f6936cd67d",
+      "name": "validation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6480,
+        832
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -4800,
+        992
+      ],
+      "id": "74c15d53-c851-4ea2-85a3-59d3a5150520",
+      "name": "download_binary"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://upload.twitter.com/1.1/media/upload.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twitterOAuth1Api",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "media",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -4592,
+        1168
+      ],
+      "id": "1e763f6c-c210-4b8c-9f18-da40e8fec737",
+      "name": "HTTP Request1",
+      "credentials": {
+        "twitterOAuth1Api": {
+          "id": "mhJvIQT2Q2F59y1r",
+          "name": "X OAuth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Topic_picker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Generate Multi-Captions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Post to Instagram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "download_binary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate Multi-Captions": {
+      "main": [
+        [
+          {
+            "node": "Parse Captions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Captions": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook": {
+      "main": [
+        [
+          {
+            "node": "wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Approval Sheet": {
+      "main": [
+        [
+          {
+            "node": "Update_topic_picker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "wait",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "wait": {
+      "main": [
+        [
+          {
+            "node": "Add to Approval Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic_picker": {
+      "main": [
+        [
+          {
+            "node": "validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Instagram": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Instagram1": {
+      "main": [
+        [
+          {
+            "node": "wait",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Post to Instagram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Post_image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post_image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validation": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download_binary": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update_topic_picker": {
+      "main": [
+        []
+      ]
+    },
+    "Post to X (Twitter)": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Post to X (Twitter)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "cfe58a16-4fc7-4447-9e8f-27a8cd3f57ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5c43445fd7a2963751b1fd3662a6d092daf492542f39772ad75f069c626d1d3a"
+  },
+  "id": "IrMhUFhfICZldO7g",
+  "tags": []
+}
