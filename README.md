@@ -99,10 +99,10 @@ MIT License
 ---
 
 ## 👤 Author
-**Sandeep Kothapalli**  
+**Swetha Kothapalli**  
 Automation Engineer | n8n Specialist  
 
-GitHub: https://github.com/<your-username>
-LinkedIn: https://www.linkedin.com/in/<your-profile>
+GitHub: https://github.com/swethakothapalli
+LinkedIn: [https://www.linkedin.com/in/<your-profile>](https://www.linkedin.com/in/swetha-kothapalli-248594199/)
 
 
